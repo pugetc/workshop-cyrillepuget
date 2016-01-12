@@ -1,0 +1,141 @@
+apiVersion: v1 
+items: 
+- apiVersion: v1 
+  kind: ImageStream 
+  metadata: 
+    annotations: 
+      openshift.io/generated-by: OpenShiftNewApp 
+    creationTimestamp: null 
+    labels: 
+      app: sample 
+    name: workshop-cyrillepuget 
+  spec: {} 
+  status: 
+    dockerImageRepository: "" 
+- apiVersion: v1 
+  kind: BuildConfig 
+  metadata: 
+    annotations: 
+      openshift.io/generated-by: OpenShiftNewApp 
+    creationTimestamp: null 
+    labels: 
+      app: sample 
+    name: workshop-cyrillepuget 
+  spec: 
+    output: 
+      to: 
+        kind: ImageStreamTag 
+        name: workshop-cyrillepuget:latest 
+    resources: {} 
+    source: 
+      git: 
+        ref: master 
+        uri: https://github.com/orangekmt/workshop-cyrillepuget.git 
+      type: Git 
+    strategy: 
+      sourceStrategy: 
+        from: 
+          kind: ImageStreamTag 
+          name: jboss-webserver30-tomcat7-openshift:latest 
+          namespace: openshift 
+      type: Source 
+    triggers: 
+    - github: 
+        secret: ZjV0qsZFdN15K7iE0o96 
+      type: GitHub 
+    - generic: 
+        secret: 54Zhfzenk45J_ZRuWL8V 
+      type: Generic 
+    - type: ConfigChange 
+    - imageChange: {} 
+      type: ImageChange 
+  status: 
+    lastVersion: 0 
+- apiVersion: v1 
+  kind: DeploymentConfig 
+  metadata: 
+    annotations: 
+      openshift.io/generated-by: OpenShiftNewApp 
+    creationTimestamp: null 
+    labels: 
+      app: sample 
+    name: workshop-cyrillepuget 
+  spec: 
+    replicas: 1 
+    selector: 
+      app: sample 
+      deploymentconfig: workshop-cyrillepuget 
+    strategy: 
+      resources: {} 
+    template: 
+      metadata: 
+        annotations: 
+          openshift.io/generated-by: OpenShiftNewApp 
+        creationTimestamp: null 
+        labels: 
+          app: sample 
+          deploymentconfig: workshop-cyrillepuget 
+      spec: 
+        containers: 
+        - image: library/workshop-cyrillepuget:latest 
+          name: workshop-cyrillepuget 
+          ports: 
+          - containerPort: 8080 
+            protocol: TCP 
+          - containerPort: 8443 
+            protocol: TCP 
+          resources: {} 
+    triggers: 
+    - type: ConfigChange 
+    - imageChangeParams: 
+        automatic: true 
+        containerNames: 
+        - workshop-cyrillepuget 
+        from: 
+          kind: ImageStreamTag 
+          name: workshop-cyrillepuget:latest 
+      type: ImageChange 
+  status: {} 
+- apiVersion: v1 
+  kind: Service 
+  metadata: 
+    annotations: 
+      openshift.io/generated-by: OpenShiftNewApp 
+    creationTimestamp: null 
+    labels: 
+      app: sample 
+    name: workshop-cyrillepuget 
+  spec: 
+    ports: 
+    - name: 8080-tcp 
+      port: 8080 
+      protocol: TCP 
+      targetPort: 8080 
+    - name: 8443-tcp 
+      port: 8443 
+      protocol: TCP 
+      targetPort: 8443 
+    selector: 
+      app: sample 
+      deploymentconfig: workshop-cyrillepuget 
+  status: 
+    loadBalancer: {} 
+- apiVersion: v1 
+  kind: Route 
+  metadata: 
+    annotations: 
+      openshift.io/host.generated: "true" 
+    creationTimestamp: null 
+    labels: 
+      app: sample 
+    name: workshop-cyrillepuget 
+  spec: 
+    host: workshop-cyrillepuget.kmt.orange-labs.fr 
+    port: 
+      targetPort: "8080" 
+    to: 
+      kind: Service 
+      name: workshop-cyrillepuget 
+metadata: {} 
+kind: List 
+metadata: {} 
